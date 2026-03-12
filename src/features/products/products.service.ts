@@ -72,8 +72,9 @@ export class ProductsService {
     return this.productRepository.save(product);
   }
 
-  async remove(id: number): Promise<void> {
+  async remove(id: number): Promise<{ message: string }> {
     const product = await this.findOne(id);
     await this.productRepository.remove(product);
+    return { message: '상품이 삭제되었습니다.' };
   }
 }

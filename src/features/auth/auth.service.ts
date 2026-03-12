@@ -109,10 +109,6 @@ export class AuthService {
       ? await this.usersService.updateName(userId, dto.name)
       : await this.usersService.findById(userId);
 
-    return {
-      data: {
-        user: { id: updated!.id, email: updated!.email, name: updated!.name, role: updated!.role },
-      },
-    };
+    return { id: updated!.id, email: updated!.email, name: updated!.name, role: updated!.role };
   }
 }
