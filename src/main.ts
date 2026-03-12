@@ -10,9 +10,7 @@ async function bootstrap() {
 
   app.enableCors({ origin: 'http://localhost:5173' });
 
-  app.useGlobalPipes(
-    new ValidationPipe({ whitelist: true, transform: true }),
-  );
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
   app.useGlobalInterceptors(new ResponseInterceptor());
   app.useGlobalFilters(new HttpExceptionFilter());
 
@@ -22,8 +20,12 @@ async function bootstrap() {
     .setVersion('1.0')
     .addBearerAuth()
     .build();
-  SwaggerModule.setup('api-docs', app, SwaggerModule.createDocument(app, config));
+  SwaggerModule.setup(
+    'api-docs',
+    app,
+    SwaggerModule.createDocument(app, config),
+  );
 
   await app.listen(process.env.PORT ?? 3000);
 }
-bootstrap();
+void bootstrap();
