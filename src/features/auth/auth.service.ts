@@ -101,11 +101,7 @@ export class AuthService {
   }
 
   getMe(user: User) {
-    return {
-      data: {
-        user: { id: user.id, email: user.email, name: user.name, role: user.role },
-      },
-    };
+    return { id: user.id, email: user.email, name: user.name, role: user.role };
   }
 
   async updateMe(userId: number, dto: UpdateMeDto) {
