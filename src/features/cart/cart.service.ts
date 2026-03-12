@@ -18,13 +18,16 @@ export class CartService {
   ) {}
 
   async getCart(userId: number): Promise<Cart> {
-    const cart = await this.cartRepository.findOne({
+    let cart = await this.cartRepository.findOne({
       where: { userId },
       relations: ['items', 'items.product'],
     });
 
     if (!cart) {
-      throw new NotFoundException('장바구니를 찾을 수 없습니다.');
+      cart = await this.cartRepository.save(
+        this.cartRepository.create({ userId }),
+      );
+      cart.items = [];
     }
 
     return cart;
