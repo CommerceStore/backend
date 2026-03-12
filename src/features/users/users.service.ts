@@ -23,7 +23,10 @@ export class UsersService {
     return this.userRepository.save(user);
   }
 
-  async updateRefreshToken(userId: number, refreshToken: string | null): Promise<void> {
+  async updateRefreshToken(
+    userId: number,
+    refreshToken: string | null,
+  ): Promise<void> {
     await this.userRepository.update(userId, { refreshToken });
   }
 }

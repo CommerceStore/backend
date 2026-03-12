@@ -31,12 +31,18 @@ export class OrdersService {
       const itemsToCreate: Partial<OrderItem>[] = [];
 
       for (const item of dto.items) {
-        const product = await manager.findOne(Product, { where: { id: item.productId } });
+        const product = await manager.findOne(Product, {
+          where: { id: item.productId },
+        });
         if (!product) {
-          throw new NotFoundException(`상품(ID: ${item.productId})을 찾을 수 없습니다.`);
+          throw new NotFoundException(
+            `상품(ID: ${item.productId})을 찾을 수 없습니다.`,
+          );
         }
         if (product.stock < item.quantity) {
-          throw new BadRequestException(`상품 "${product.name}"의 재고가 부족합니다.`);
+          throw new BadRequestException(
+            `상품 "${product.name}"의 재고가 부족합니다.`,
+          );
         }
 
         totalAmount += product.price * item.quantity;
@@ -93,7 +99,9 @@ export class OrdersService {
       }
 
       for (const item of order.items) {
-        const product = await manager.findOne(Product, { where: { id: item.productId } });
+        const product = await manager.findOne(Product, {
+          where: { id: item.productId },
+        });
         if (product) {
           product.stock += item.quantity;
           await manager.save(product);
@@ -105,8 +113,13 @@ export class OrdersService {
     });
   }
 
-  async updateStatus(orderId: number, dto: UpdateOrderStatusDto): Promise<Order> {
-    const order = await this.orderRepository.findOne({ where: { id: orderId } });
+  async updateStatus(
+    orderId: number,
+    dto: UpdateOrderStatusDto,
+  ): Promise<Order> {
+    const order = await this.orderRepository.findOne({
+      where: { id: orderId },
+    });
     if (!order) {
       throw new NotFoundException('주문을 찾을 수 없습니다.');
     }
@@ -123,7 +136,11 @@ export class OrdersService {
     });
   }
 
-  async findOne(userId: number, orderId: number, role: UserRole): Promise<Order> {
+  async findOne(
+    userId: number,
+    orderId: number,
+    role: UserRole,
+  ): Promise<Order> {
     const order = await this.orderRepository.findOne({
       where: { id: orderId },
       relations: ['items', 'items.product'],

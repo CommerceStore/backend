@@ -48,7 +48,10 @@ export class CartController {
 
   @ApiOperation({ summary: '장바구니 상품 삭제' })
   @Delete('items/:itemId')
-  removeItem(@CurrentUser() user: User, @Param('itemId', ParseIntPipe) itemId: number) {
+  removeItem(
+    @CurrentUser() user: User,
+    @Param('itemId', ParseIntPipe) itemId: number,
+  ) {
     return this.cartService.removeItem(user.id, itemId);
   }
 
