@@ -9,9 +9,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
 import { Cart } from '../cart/entities/cart.entity';
+import { User } from '../users/entities/user.entity';
 import { UsersService } from '../users/users.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { UpdateMeDto } from './dto/update-me.dto';
 
 @Injectable()
 export class AuthService {
@@ -96,5 +98,21 @@ export class AuthService {
   async logout(userId: number) {
     await this.usersService.updateRefreshToken(userId, null);
     return { message: '로그아웃되었습니다.' };
+  }
+
+  getMe(user: User) {
+    return { id: user.id, email: user.email, name: user.name, role: user.role };
+  }
+
+  async updateMe(userId: number, dto: UpdateMeDto) {
+    const updated = dto.name
+      ? await this.usersService.updateName(userId, dto.name)
+      : await this.usersService.findById(userId);
+
+    return {
+      data: {
+        user: { id: updated!.id, email: updated!.email, name: updated!.name, role: updated!.role },
+      },
+    };
   }
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Post, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import type { Response } from 'express';
@@ -7,6 +7,7 @@ import { User } from '../users/entities/user.entity';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
+import { UpdateMeDto } from './dto/update-me.dto';
 
 const COOKIE_OPTIONS = {
   httpOnly: true,
@@ -59,6 +60,20 @@ export class AuthController {
       maxAge: 15 * 60 * 1000,
     });
     return { message: '토큰이 갱신되었습니다.' };
+  }
+
+  @ApiOperation({ summary: '내 정보 조회' })
+  @UseGuards(AuthGuard('jwt'))
+  @Get('me')
+  getMe(@CurrentUser() user: User) {
+    return this.authService.getMe(user);
+  }
+
+  @ApiOperation({ summary: '내 정보 수정' })
+  @UseGuards(AuthGuard('jwt'))
+  @Patch('me')
+  updateMe(@CurrentUser() user: User, @Body() dto: UpdateMeDto) {
+    return this.authService.updateMe(user.id, dto);
   }
 
   @ApiOperation({ summary: '로그아웃' })
