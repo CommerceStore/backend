@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AdminModule } from './features/admin/admin.module';
 import { AuthModule } from './features/auth/auth.module';
 import { CartModule } from './features/cart/cart.module';
 import { OrdersModule } from './features/orders/orders.module';
@@ -28,6 +29,7 @@ import { UsersModule } from './features/users/users.module';
     ProductsModule,
     CartModule,
     OrdersModule,
+    AdminModule,
   ],
 })
 export class AppModule {}
