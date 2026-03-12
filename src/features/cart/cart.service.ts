@@ -57,7 +57,7 @@ export class CartService {
     userId: number,
     itemId: number,
     dto: UpdateCartItemDto,
-  ): Promise<CartItem | void> {
+  ): Promise<CartItem | { message: string }> {
     const cart = await this.getCart(userId);
     const item = await this.cartItemRepository.findOne({
       where: { id: itemId, cartId: cart.id },
@@ -69,14 +69,14 @@ export class CartService {
 
     if (dto.quantity === 0) {
       await this.cartItemRepository.remove(item);
-      return;
+      return { message: '장바구니 상품이 삭제되었습니다.' };
     }
 
     item.quantity = dto.quantity;
     return this.cartItemRepository.save(item);
   }
 
-  async removeItem(userId: number, itemId: number): Promise<void> {
+  async removeItem(userId: number, itemId: number): Promise<{ message: string }> {
     const cart = await this.getCart(userId);
     const item = await this.cartItemRepository.findOne({
       where: { id: itemId, cartId: cart.id },
@@ -87,10 +87,12 @@ export class CartService {
     }
 
     await this.cartItemRepository.remove(item);
+    return { message: '장바구니 상품이 삭제되었습니다.' };
   }
 
-  async clearCart(userId: number): Promise<void> {
+  async clearCart(userId: number): Promise<{ message: string }> {
     const cart = await this.getCart(userId);
     await this.cartItemRepository.delete({ cartId: cart.id });
+    return { message: '장바구니가 비워졌습니다.' };
   }
 }
