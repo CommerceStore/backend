@@ -23,6 +23,11 @@ export class UsersService {
     return this.userRepository.save(user);
   }
 
+  async updateName(userId: number, name: string): Promise<User> {
+    await this.userRepository.update(userId, { name });
+    return this.userRepository.findOne({ where: { id: userId } }) as Promise<User>;
+  }
+
   async updateRefreshToken(
     userId: number,
     refreshToken: string | null,
