@@ -2,7 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Request } from 'express';
-import { ExtractJwt, Strategy, StrategyOptionsWithRequest } from 'passport-jwt';
+import { Strategy, StrategyOptionsWithRequest } from 'passport-jwt';
 import { UsersService } from '../../users/users.service';
 
 interface JwtRefreshPayload {
@@ -11,13 +11,17 @@ interface JwtRefreshPayload {
 }
 
 @Injectable()
-export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
+export class JwtRefreshStrategy extends PassportStrategy(
+  Strategy,
+  'jwt-refresh',
+) {
   constructor(
     private readonly configService: ConfigService,
     private readonly usersService: UsersService,
   ) {
     const options: StrategyOptionsWithRequest = {
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: (req: Request) =>
+        req.cookies?.refreshToken as string | null,
       ignoreExpiration: false,
       secretOrKey: configService.getOrThrow<string>('JWT_REFRESH_SECRET'),
       passReqToCallback: true,
@@ -26,7 +30,7 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'jwt-refresh'
   }
 
   async validate(req: Request, payload: JwtRefreshPayload) {
-    const refreshToken = req.headers.authorization?.replace('Bearer ', '');
+    const refreshToken = req.cookies?.refreshToken as string | undefined;
     if (!refreshToken) {
       throw new UnauthorizedException('리프레시 토큰이 없습니다.');
     }
