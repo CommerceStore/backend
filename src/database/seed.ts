@@ -2,6 +2,9 @@ import * as bcrypt from 'bcrypt';
 import { config } from 'dotenv';
 import { DataSource } from 'typeorm';
 import { Cart } from '../features/cart/entities/cart.entity';
+import { CartItem } from '../features/cart/entities/cart-item.entity';
+import { Order } from '../features/orders/entities/order.entity';
+import { OrderItem } from '../features/orders/entities/order-item.entity';
 import {
   Product,
   ProductCategory,
@@ -17,7 +20,7 @@ const dataSource = new DataSource({
   username: process.env.DB_USERNAME || 'root',
   password: process.env.DB_PASSWORD || 'password',
   database: process.env.DB_DATABASE || 'commerce_store',
-  entities: [User, Product, Cart],
+  entities: [User, Product, Cart, CartItem, Order, OrderItem],
   synchronize: false,
 });
 
