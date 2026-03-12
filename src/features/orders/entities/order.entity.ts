@@ -34,7 +34,7 @@ export class ShippingAddress {
   @Column()
   addressDetail: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   deliveryRequest: string | null;
 }
 
