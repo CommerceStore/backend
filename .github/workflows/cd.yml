@@ -1,0 +1,41 @@
+name: CD
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+
+jobs:
+  deploy:
+    name: Deploy
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: self-hosted
+
+    steps:
+      - name: 코드 체크아웃
+        uses: actions/checkout@v4
+
+      - name: Docker Hub 로그인
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: .env 파일 생성
+        run: |
+          cat > .env << EOF
+          DB_HOST=db
+          DB_PORT=3306
+          DB_USERNAME=root
+          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+          DB_DATABASE=commerce_store
+          JWT_SECRET=${{ secrets.JWT_SECRET }}
+          JWT_REFRESH_SECRET=${{ secrets.JWT_REFRESH_SECRET }}
+          EOF
+
+      - name: 배포
+        run: |
+          docker compose pull
+          docker compose down
+          docker compose up -d
